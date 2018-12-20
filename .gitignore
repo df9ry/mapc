@@ -1,3 +1,9 @@
+# Project specific
+Documentation/
+_Debug/
+_Release/
+_Documentation
+
 # Prerequisites
 *.d
 
