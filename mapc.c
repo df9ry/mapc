@@ -154,129 +154,44 @@ bool mapc_insert(struct mapc *map, struct mapc_node *node, void *key)
 	return ins(map->compare, node, &(map->root), &h);
 }
 
-static void balance1(struct mapc_node **p, bool *h)
+static struct mapc_node *flatten(struct mapc_node *list, struct mapc_node *node)
 {
-	struct mapc_node *p1, *p2;
-	int b1, b2;
-
-	/* h == true, left branch become shorter */
-	switch ((*p)->bal) {
-	case -1:
-		(*p)->bal = 0;
-		break;
-	case 0:
-		(*p)->bal = +1;
-		(*h) = false;
-		break;
-	case +1: /* balance again */
-		p1 = (*p)->right; b1 = p1->bal;
-		if (b1 > 0) { /* simple RR rotation */
-			(*p)->right = p1->left; p1->left = (*p);
-			if (b1 == 0) {
-				(*p)->bal = +1; p1->bal = -1; (*h) = false;
-			} else {
-				(*p)->bal = 0; p1->bal = 0;
-			}
-			(*p) = p1;
-		} else { /* double RL rotation */
-			p2 = p1->left; b2 = p2->bal;
-			p1->left = p2->right; p2->left = (*p);
-			(*p)->bal = (b2 == +1)? -1 : 0;
-			p1->bal = (b2 == -1)? +1 : 0;
-			(*p) = p2; p2->bal = 0;
-		}
-		break;
-	} /* end switch */
-}
-
-static void balance2(struct mapc_node **p, bool *h)
-{
-	struct mapc_node *p1, *p2;
-	int b1, b2;
-
-	/* h == true, right branch become shorter */
-	switch ((*p)->bal) {
-	case -1:
-		(*p)->bal = 0;
-		break;
-	case 0:
-		(*p)->bal = -1;
-		*h = false;
-		break;
-	case +1: /* balance again */
-		p1 = (*p)->left; b1 = p1->bal;
-		if (b1 <= 0) { /* simple LL rotation */
-			(*p)->left = p1->right; p1->right = (*p);
-			if (b1 == 0) {
-				(*p)->bal = -1; p1->bal = +1; (*h) = false;
-			} else {
-				(*p)->bal = 0; p1->bal = 0;
-			}
-		} else { /* double LR rotation */
-			p2 = p1->right; b2 = p2->bal;
-			p1->right = p2->left; p2->left = p1;
-			(*p)->left = p2->right; p2->right = (*p);
-			(*p)->bal = (b2 == -1)? +1 : 0;
-			p1->bal = (b2 == +1)? -1 : 0;
-			(*p) = p2; p2->bal = 0;
-		}
-		break;
-	} /* end switch */
-}
-
-static void del(struct mapc_node **r, bool *h)
-{ /* h == false */
-	if ((*r)->right) {
-		del(&((*r)->right), h);
-		if (*h) {
-			balance2(r, h);
-		} else {
-			///TODO: weird///
-		}
-	}
-}
-
-static struct mapc_node *delete(f_compare compare, void *key, struct mapc_node **p, bool *h)
-{
-	int c;
-	struct mapc_node *q;
-
-	if (!(*p))  {
-		*h = false;
-		return NULL;
-	}
-	c = compare(key, (*p)->key);
-	if (c < 0) {
-		q = delete(compare, key, &((*p)->left), h);
-		if (*h)
-			balance1(p, h);
-	} else if (c > 0) {
-		q = delete(compare, key, &((*p)->right), h);
-		if (*h)
-			balance2(p, h);
-	} else { /* remove *p */
-		q = (*p);
-		if (!q->right) {
-			(*p) = q->left;
-			(*h) = true;
-		} else if (!q->left) {
-			(*p) = q->right;
-			(*h) = true;
-		} else {
-			del(&(q->left), h);
-			if (h)
-				balance1(p, h);
-		}
-	}
-	return q;
+	if (!node)
+		return list;
+	if (node->right)
+		list = flatten(list, node->right);
+	node->right = list;
+	list = node;
+	if (node->left)
+		list = flatten(list, node->left);
+	node->left = NULL;
+	return list;
 }
 
 struct mapc_node *mapc_remove(struct mapc *map, void *key)
 {
-	bool h;
+	struct mapc_node *to_remove, *list, *next;
 
 	assert(map);
-	return delete(map->compare, key, &(map->root), &h);
+	to_remove = mapc_lookup(map, key);
+	if (!to_remove)
+		return NULL;
+	list = flatten(NULL, map->root);
+	map->root = NULL;
+	while (list != NULL) {
+		next = list->right;
+		if (list != to_remove)
+			mapc_insert(map, list, list->key);
+		list = next;
+	} // end while //
+	return to_remove;
+}
+
+void mapc_clear(struct mapc *map)
+{
+	assert(map);
+	flatten(NULL, map->root);
+	map->root = NULL;
 }
 
 static void __foreach(struct mapc_node *node, f_oper f, void *user_data, bool reverse)

@@ -40,8 +40,8 @@ struct mapc_node {
  * @brief Compare function for the map.
  * @param o1 Operand 1 for the compare.
  * @param o2 Operand 2 for the compare.
- * @return Value less than 0, when @o1 < @o2, 0 when they are equal and
- *         value greater than 0, when @o1 > @o2.
+ * @return Value less than 0, when o1 < o2, 0 when they are equal and
+ *         value greater than 0, when o1 > o2.
  */
 typedef int (*f_compare)(void *o1, void *o2);
 
@@ -118,7 +118,7 @@ extern void mapc_foreach_reverse(struct mapc *map, f_oper f, void *user_data);
  * @param f Function to call for each member.
  * @param user_data Pointer to pass to each invocation of f.
  */
-#define MAPC_FOREACH_REVERSE(map, f, user_data) mapc_foreach(&map, f, user_data);
+#define MAPC_FOREACH_REVERSE(map, f, user_data) mapc_foreach_reverse(&map, f, user_data);
 
 /**
  * @brief Insert a node into a map.
@@ -141,18 +141,30 @@ extern bool mapc_insert(struct mapc *map, struct mapc_node *node, void *key);
 /**
  * @brief Remove a node from a map.
  * @param map Pointer to map to remove the node.
- * @param key Keyy to look up for.
- * @Return Pointer of the removed node or NULL if not found.
+ * @param key Key to look up for.
+ * @return Pointer of the removed node or NULL if not found.
  */
 extern struct mapc_node *mapc_remove(struct mapc *map, void *key);
 
 /**
  * @brief Remove a node from a map.
  * @param map Pointer to map to remove the node.
- * @param key Keyy to look up for.
- * @Return Pointer of the removed node or NULL if not found.
+ * @param key Key to look up for.
+ * @return Pointer of the removed node or NULL if not found.
  */
 #define MAPC_REMOVE(map, key) mapc_remove(&map, key)
+
+/**
+ * @brief Clear the map.
+ * @param map Pointer to the map.
+ */
+extern void mapc_clear(struct mapc *map);
+
+/**
+ * @brief Clear the map.
+ * @param map Pointer to the map.
+ */
+#define MAPC_CLEAR(map) mapc_clear(&map)
 
 /**
  * @brief Lookup map for a key.
@@ -169,6 +181,25 @@ extern struct mapc_node *mapc_lookup(struct mapc *map, void *key);
  * @return Pointer to mapc_node or NULL, when not found.
  */
 #define MAPC_LOOKUP(map, key) mapc_lookup(&map, key)
+
+/**
+ * @brief Lookup map for a key.
+ * @param map Pointer to the map to lookup.
+ * @param key Key to look up for.
+ * @return True if the map contains this key.
+ */
+static inline bool mapc_contains(struct mapc *map, void *key)
+{
+	return (mapc_lookup(map, key));
+}
+
+/**
+ * @brief Lookup map for a key.
+ * @param map The map to lookup.
+ * @param key Key to look up for.
+ * @return True if the map contains this key.
+ */
+#define MAPC_CONTAINS(map, key) mapc_contains(&map, key)
 
 /**
  * @brief Get number of elements in the tree.

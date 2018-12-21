@@ -108,28 +108,139 @@ int main(int argc, char *argv[]) {
 		assert(MAPC_SIZE(map) == 10);
 		assert(MAPC_HEIGHT(map) == 4);
 		MAPC_FOREACH(map, on_node, &s);
-		//printf("%s\n", STRING_C(s));
 		assert(strcmp(STRING_C(s),
 			"(0/10)(1/11)(2/12)(3/13)(4/14)(5/15)(6/16)(7/17)(8/18)(9/19)") == 0);
 		STRING_RESET(s);
+		MAPC_FOREACH_REVERSE(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(9/19)(8/18)(7/17)(6/16)(5/15)(4/14)(3/13)(2/12)(1/11)(0/10)") == 0);
+		STRING_RESET(s);
 
 		key = 8;
+		assert(MAPC_CONTAINS(map, &key));
 		assert(MAPC_REMOVE(map, &key) == &eight.node);
+		assert(!MAPC_CONTAINS(map, &key));
 		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(0/10)(1/11)(2/12)(3/13)(4/14)(5/15)(6/16)(7/17)(9/19)") == 0);
+		STRING_RESET(s);
 
 		key = 7;
+		assert(MAPC_CONTAINS(map, &key));
 		assert(MAPC_REMOVE(map, &key) == &seven.node);
+		assert(!MAPC_CONTAINS(map, &key));
 		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(0/10)(1/11)(2/12)(3/13)(4/14)(5/15)(6/16)(9/19)") == 0);
+		STRING_RESET(s);
 
 		key = 3;
+		assert(MAPC_CONTAINS(map, &key));
 		assert(MAPC_REMOVE(map, &key) == &three.node);
-		//assert(MAPC_REMOVE(map, &key) == NULL);
-
-
-		MAPC_FOREACH(map, on_node, &s);
-		printf("%s\n", STRING_C(s));
-		STRING_RESET(s);
+		assert(!MAPC_CONTAINS(map, &key));
 		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(0/10)(1/11)(2/12)(4/14)(5/15)(6/16)(9/19)") == 0);
+		STRING_RESET(s);
+
+		assert(MAPC_REMOVE(map, &key) == NULL);
+
+		key = 6;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &six.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(0/10)(1/11)(2/12)(4/14)(5/15)(9/19)") == 0);
+		STRING_RESET(s);
+
+		key = 0;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &zero.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(1/11)(2/12)(4/14)(5/15)(9/19)") == 0);
+		STRING_RESET(s);
+
+		key = 9;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &nine.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(1/11)(2/12)(4/14)(5/15)") == 0);
+		STRING_RESET(s);
+
+		key = 1;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &one.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(2/12)(4/14)(5/15)") == 0);
+		STRING_RESET(s);
+
+		key = 4;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &four.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(2/12)(5/15)") == 0);
+		STRING_RESET(s);
+
+		key = 5;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &five.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"(2/12)") == 0);
+		STRING_RESET(s);
+
+		key = 2;
+		assert(MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == &two.node);
+		assert(!MAPC_CONTAINS(map, &key));
+		assert(MAPC_REMOVE(map, &key) == NULL);
+		MAPC_FOREACH(map, on_node, &s);
+		assert(strcmp(STRING_C(s),
+			"") == 0);
+		STRING_RESET(s);
+
+		printf ("OK\n");
+	}
+
+	{
+		struct string s;
+		STRING_INIT(s);
+
+		printf("Testing mapc_clear\n");
+		MAPC_INIT(map, compare);
+
+		assert(MAPC_INSERT(map, &six.node,   &six.key  ));
+		assert(MAPC_INSERT(map, &one.node,   &one.key  ));
+		assert(MAPC_INSERT(map, &eight.node, &eight.key));
+		assert(MAPC_INSERT(map, &four.node,  &four.key ));
+		assert(MAPC_INSERT(map, &nine.node,  &nine.key ));
+		assert(MAPC_INSERT(map, &three.node, &three.key));
+		assert(MAPC_INSERT(map, &zero.node,  &zero.key ));
+		assert(MAPC_INSERT(map, &two.node,   &two.key  ));
+		assert(MAPC_INSERT(map, &five.node,  &five.key ));
+		assert(MAPC_INSERT(map, &seven.node, &seven.key));
+		MAPC_CLEAR(map);
+		assert(MAPC_SIZE(map) == 0);
+		STRING_RESET(s);
 
 		printf ("OK\n");
 	}
