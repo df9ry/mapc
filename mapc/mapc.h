@@ -18,7 +18,14 @@
 #ifndef MAPC_MAPC_H_
 #define MAPC_MAPC_H_
 
-/** @file */
+/**
+ * @file
+ * @brief Use #include <mapc/mapc.h> to use this library.
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -30,7 +37,7 @@
  * member to your struct.
  */
 struct mapc_node {
-	void             *key;    /**< Node key.                               */
+	const void       *key;    /**< Node key.                               */
 	struct mapc_node *left;   /**< Nodes that are "less" than this one.    */
 	struct mapc_node *right;  /**< Nodes that are "greater" than this one. */
 	int               bal;    /**< Helper value for balancing the tree.    */
@@ -43,7 +50,7 @@ struct mapc_node {
  * @return Value less than 0, when o1 < o2, 0 when they are equal and
  *         value greater than 0, when o1 > o2.
  */
-typedef int (*f_compare)(void *o1, void *o2);
+typedef int (*f_compare)(const void *o1, const void *o2);
 
 /**
  * @brief Root level struct of a mapc.
@@ -127,7 +134,7 @@ extern void mapc_foreach_reverse(struct mapc *map, f_oper f, void *user_data);
  * @param key Key for insertion of the node.
  * @return True, if the node could be inserted into the map, false otherwise.
  */
-extern bool mapc_insert(struct mapc *map, struct mapc_node *node, void *key);
+extern bool mapc_insert(struct mapc *map, struct mapc_node *node, const void *key);
 
 /**
  * @brief Insert a node into a map.
@@ -144,7 +151,7 @@ extern bool mapc_insert(struct mapc *map, struct mapc_node *node, void *key);
  * @param key Key to look up for.
  * @return Pointer of the removed node or NULL if not found.
  */
-extern struct mapc_node *mapc_remove(struct mapc *map, void *key);
+extern struct mapc_node *mapc_remove(struct mapc *map, const void *key);
 
 /**
  * @brief Remove a node from a map.
@@ -172,7 +179,7 @@ extern void mapc_clear(struct mapc *map);
  * @param key Key to look up for.
  * @return Pointer to mapc_node or NULL, when not found.
  */
-extern struct mapc_node *mapc_lookup(struct mapc *map, void *key);
+extern struct mapc_node *mapc_lookup(struct mapc *map, const void *key);
 
 /**
  * @brief Lookup map for a key.
@@ -188,7 +195,7 @@ extern struct mapc_node *mapc_lookup(struct mapc *map, void *key);
  * @param key Key to look up for.
  * @return True if the map contains this key.
  */
-static inline bool mapc_contains(struct mapc *map, void *key)
+static inline bool mapc_contains(struct mapc *map, const void *key)
 {
 	return (mapc_lookup(map, key));
 }
@@ -228,5 +235,9 @@ extern size_t mapc_height(struct mapc *map);
  * @return Height of the tree.
  */
 #define MAPC_HEIGHT(map) mapc_height(&map)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* MAPC_MAPC_H_ */

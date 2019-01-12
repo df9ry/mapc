@@ -26,7 +26,7 @@
 
 static struct mapc map;
 
-static int compare(void *o1, void *o2)
+static int compare(const void *o1, const void *o2)
 {
 	int i1 = *(int *)o1, i2 = *(int *)o2;
 

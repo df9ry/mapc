@@ -46,7 +46,7 @@ void mapc_free(struct mapc *map)
 	assert(map->root == NULL);
 }
 
-struct mapc_node *mapc_lookup(struct mapc *map, void *key)
+struct mapc_node *mapc_lookup(struct mapc *map, const void *key)
 {
 	struct mapc_node *p;
 	int c;
@@ -143,7 +143,7 @@ static bool ins(f_compare compare, struct mapc_node *x, struct mapc_node **p, bo
 	return result;
 }
 
-bool mapc_insert(struct mapc *map, struct mapc_node *node, void *key)
+bool mapc_insert(struct mapc *map, struct mapc_node *node, const void *key)
 {
 	bool h;
 
@@ -168,7 +168,7 @@ static struct mapc_node *flatten(struct mapc_node *list, struct mapc_node *node)
 	return list;
 }
 
-struct mapc_node *mapc_remove(struct mapc *map, void *key)
+struct mapc_node *mapc_remove(struct mapc *map, const void *key)
 {
 	struct mapc_node *to_remove, *list, *next;
 

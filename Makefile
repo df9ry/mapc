@@ -60,8 +60,7 @@ install: libmapc.so doc
 	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so.0.1 )
 	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so.0   )
 	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so     )
-	sudo cp mapc_test /usr/local/bin
-	sudo cp -rf $(SRCDIR)/mapc /usr/local/include
+	sudo cp -rf ../mapc /usr/local/include
 	sudo chown -R root:staff /usr/local/include/mapc
 	sudo mkdir -p /usr/local/doc
 	sudo cp $(SRCDIR)/_Documentation/mapc.pdf /usr/local/doc
