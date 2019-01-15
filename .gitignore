@@ -2,7 +2,8 @@
 Documentation/
 _Debug/
 _Release/
-_Documentation
+_Documentation/
+.settings/
 
 # Prerequisites
 *.d
