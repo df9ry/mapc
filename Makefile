@@ -47,14 +47,13 @@ test: $(TARGET)
 install: $(TARGET)
 ifeq ($(OS),Cygwin)
 	cp libmapc.dll /usr/local/lib
-	cp -rf ../mapc /usr/local/include
 else
-	sudo cp libmapc.so /usr/local/lib/libmapc.so.0.1.0
-	sudo chown root:staff /usr/local/lib/libmapc.so.0.1.0	
-	sudo chmod 0755       /usr/local/lib/libmapc.so.0.1.0	
-	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so.0.1 )
-	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so.0   )
-	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so     )
+	cp libmapc.so /usr/local/lib/libmapc.so.0.1.0
+	chmod 0755    /usr/local/lib/libmapc.so.0.1.0	
+	( cd /usr/local/lib && ln -sf libmapc.so.0.1.0 libmapc.so.0.1 )
+	( cd /usr/local/lib && ln -sf libmapc.so.0.1.0 libmapc.so.0   )
+	( cd /usr/local/lib && ln -sf libmapc.so.0.1.0 libmapc.so     )
 endif
+	cp -rf ../mapc /usr/local/include
 	
 endif
