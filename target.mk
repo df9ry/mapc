@@ -1,4 +1,4 @@
-#   Project stringc
+#   Project mapc
 #   Copyright (C) 2019  tania@df9ry.de
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,19 @@ _CONF := Debug
 export _CONF
 endif
 
+OS := $(shell uname -o)
+export OS
+ifeq ($(OS),Cygwin)
+	SOEXT := dll
+else
+	SOEXT := so
+endif
+export SOEXT
+
 OBJDIR := _$(_CONF)
+export OBJDIR
 DOCDIR := _Documentation
+export DOCDIR
 
 MAKETARGET = $(MAKE) --no-print-directory -C $@ -f $(CURDIR)/Makefile \
 	SRCDIR=$(CURDIR) $(MAKECMDGOALS)

@@ -18,51 +18,43 @@ ifeq (,$(filter _%,$(notdir $(CURDIR))))
 include target.mk
 else
 
-VPATH = $(SRCDIR)
+VPATH    =  $(SRCDIR)
+CFLAGS   =  -Wall -Werror -g -ggdb -fpic -fmessage-length=0 -pthread
 
-CFLAGS   =  -Wall -g -ggdb -fpic -fmessage-length=0 -pthread
-
-LDFLAGS  =  -Wall -g -ggdb -fpic -fmessage-length=0 -pthread
-			
 OBJS     =  mapc.o
-			
 LIBS     =  -lpthread
+TARGET   =  libmapc.$(SOEXT)
 
-TARGET   =  libmapc.so
-
-$(TARGET):  $(OBJS)
-	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
-	
-%.o: %.c $(SRCDIR)
-	$(CC) $(CFLAGS) -c $<	
-	
 all: $(TARGET)
 	echo "Build OK"
 
+$(TARGET): $(OBJS)
+	$(CC) -shared $(CFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+	
+%.o: %.c $(SRCDIR)
+	$(CC) -shared $(CFLAGS) -c $<	
+	
 doc:
-	doxygen $(SRCDIR)/doxygen.conf
-	( cd $(SRCDIR)/_Documentation/latex && make )
-	cp $(SRCDIR)/_Documentation/latex/refman.pdf \
-		$(SRCDIR)/_Documentation/mapc.pdf
+	doxygen ../doxygen.conf
+	( cd ../$(DOCDIR)/latex && make )
+	cp ../$(DOCDIR)/latex/refman.pdf ../$(DOCDIR)/mapc.pdf
 
 test: $(TARGET)
-	$(CC) -Wall -Werror -g -ggdb -fmessage-length=0 -o mapc_test \
-		-L$(SRCDIR)/_Debug \
-		-lmapc \
-		-lstringc \
-		$(SRCDIR)/mapc_test.c
+	cp /usr/local/lib/libstringc.$(SOEXT) .
+	$(CC) $(CFLAGS) -o mapc_test -L../_Debug -lmapc	-lstringc ../mapc_test.c
 	sh -c "LD_LIBRARY_PATH=./ ./mapc_test"
 	
-install: libmapc.so doc
+install: $(TARGET)
+ifeq ($(OS),Cygwin)
+	cp libmapc.dll /usr/local/lib
+	cp -rf ../mapc /usr/local/include
+else
 	sudo cp libmapc.so /usr/local/lib/libmapc.so.0.1.0
 	sudo chown root:staff /usr/local/lib/libmapc.so.0.1.0	
 	sudo chmod 0755       /usr/local/lib/libmapc.so.0.1.0	
 	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so.0.1 )
 	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so.0   )
 	( cd /usr/local/lib && sudo ln -sf libmapc.so.0.1.0 libmapc.so     )
-	sudo cp -rf ../mapc /usr/local/include
-	sudo chown -R root:staff /usr/local/include/mapc
-	sudo mkdir -p /usr/local/doc
-	sudo cp $(SRCDIR)/_Documentation/mapc.pdf /usr/local/doc
+endif
 	
 endif
