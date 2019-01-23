@@ -45,7 +45,7 @@ test: $(TARGET)
 	sh -c "LD_LIBRARY_PATH=./ ./mapc_test"
 	
 install: $(TARGET)
-ifeq ($(OS),Cygwin)
+ifneq ($(OS),Linux)
 	cp libmapc.dll /usr/local/lib
 else
 	cp libmapc.so /usr/local/lib/libmapc.so.0.1.0
