@@ -40,13 +40,13 @@ doc:
 	cp ../$(DOCDIR)/latex/refman.pdf ../$(DOCDIR)/mapc.pdf
 
 test: $(TARGET)
-	cp /usr/local/lib/libstringc.$(SOEXT) .
+	cp $(LOCAL)/$(SODIR)/libstringc.$(SOEXT) .
 	$(CC) $(CFLAGS) -o mapc_test -L../_Debug -lmapc	-lstringc ../mapc_test.c
 	sh -c "LD_LIBRARY_PATH=./ ./mapc_test"
 	
 install: $(TARGET)
-ifneq ($(OS),Linux)
-	cp libmapc.dll /usr/local/lib
+ifneq ($(OS),GNU/Linux)
+	cp $(TARGET) $(LOCAL)/$(SODIR)
 else
 	cp libmapc.so /usr/local/lib/libmapc.so.0.1.0
 	chmod 0755    /usr/local/lib/libmapc.so.0.1.0	
@@ -54,6 +54,6 @@ else
 	( cd /usr/local/lib && ln -sf libmapc.so.0.1.0 libmapc.so.0   )
 	( cd /usr/local/lib && ln -sf libmapc.so.0.1.0 libmapc.so     )
 endif
-	cp -rf ../mapc /usr/local/include
+	cp -rf $(SRCDIR)/mapc $(LOCAL)/include
 	
 endif

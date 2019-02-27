@@ -23,17 +23,24 @@ endif
 
 OS := $(shell uname -o)
 export OS
-ifneq ($(OS),Linux)
+ifneq ($(OS),GNU/Linux)
 	SOEXT := dll
+	SODIR := bin
+	LOCAL := $(MINGW_HOME)
 else
 	SOEXT := so
+	SODIR := lib
+	LOCAL := /usr/local
 endif
-export SOEXT
+export SOEXT SODIR LOCAL
 
 OBJDIR := _$(_CONF)
 export OBJDIR
 DOCDIR := _Documentation
 export DOCDIR
+
+CC := gcc
+export CC
 
 MAKETARGET = $(MAKE) --no-print-directory -C $@ -f $(CURDIR)/Makefile \
 	SRCDIR=$(CURDIR) $(MAKECMDGOALS)
